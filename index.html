@@ -1,108 +1,287 @@
 <!doctype html>
-<html lang="zh-Hant">
+<html lang="zh-Hant" class="scroll-smooth">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="Susan Schen 的個人學術網站，整理教學、研究、數位工具與專案作品。">
-    <title>Susan Schen | NYCU</title>
+    <meta name="description" content="Work Space for SCHEN：Susan Schen 的研究、教學、AI 與創作型工作入口。">
+    <title>Work Space for SCHEN</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800;900&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ["Inter", "Noto Sans TC", "system-ui", "sans-serif"]
+            },
+            colors: {
+              ink: "#101419",
+              signal: "#36f1cd",
+              ember: "#ff7a59",
+              violet: "#9a7cff",
+              lemon: "#f6d365"
+            },
+            boxShadow: {
+              glow: "0 0 60px rgba(54, 241, 205, 0.24)"
+            }
+          }
+        }
+      };
+    </script>
     <link rel="stylesheet" href="assets/css/styles.css">
   </head>
-  <body>
-    <header class="site-header" aria-label="網站導覽">
-      <a class="brand" href="#top" aria-label="回到首頁">
-        <span class="brand-mark">S</span>
-        <span>Susan Schen</span>
-      </a>
-      <nav class="nav-links" aria-label="主要導覽">
-        <a href="#about">關於</a>
-        <a href="#focus">研究與教學</a>
-        <a href="#work">作品</a>
-        <a href="#contact">聯絡</a>
-      </nav>
+  <body
+    x-data="workspaceApp()"
+    x-init="init()"
+    :class="{ 'dark': theme === 'dark' }"
+    class="min-h-screen bg-[#f5f1e8] text-ink antialiased transition-colors duration-300 dark:bg-[#08090d] dark:text-white"
+  >
+    <div class="pointer-events-none fixed inset-0 z-0 overflow-hidden">
+      <div class="scan-grid"></div>
+      <div class="spotlight" :style="`--x:${pointer.x}px; --y:${pointer.y}px`"></div>
+    </div>
+
+    <header class="fixed inset-x-0 top-0 z-40 border-b border-black/10 bg-[#f5f1e8]/78 px-4 py-3 backdrop-blur-2xl dark:border-white/10 dark:bg-[#08090d]/74 md:px-8">
+      <div class="mx-auto flex max-w-7xl items-center justify-between gap-4">
+        <a href="#top" class="group flex items-center gap-3" aria-label="Work Space for SCHEN">
+          <span class="grid h-10 w-10 place-items-center rounded-lg bg-ink text-sm font-black text-signal shadow-glow dark:bg-white dark:text-ink">WS</span>
+          <span class="leading-tight">
+            <span class="block text-sm font-black uppercase tracking-normal">Work Space</span>
+            <span class="block text-xs font-bold text-black/55 dark:text-white/55">for SCHEN</span>
+          </span>
+        </a>
+
+        <nav class="hidden items-center gap-1 rounded-full border border-black/10 bg-white/55 p-1 text-sm font-bold text-black/60 backdrop-blur dark:border-white/10 dark:bg-white/10 dark:text-white/65 md:flex" aria-label="主要導覽">
+          <a class="nav-pill" href="#lab">Lab</a>
+          <a class="nav-pill" href="#systems">Systems</a>
+          <a class="nav-pill" href="#missions">Missions</a>
+          <a class="nav-pill" href="#contact">Launch</a>
+        </nav>
+
+        <div class="flex items-center gap-2">
+          <button class="icon-button" type="button" @click="commandOpen = true" title="命令面板" aria-label="開啟命令面板">
+            <i data-lucide="search"></i>
+          </button>
+          <button class="icon-button" type="button" @click="toggleTheme()" title="切換模式" aria-label="切換明暗模式">
+            <i x-show="theme === 'dark'" data-lucide="sun"></i>
+            <i x-show="theme === 'light'" data-lucide="moon"></i>
+          </button>
+          <a class="hidden rounded-full bg-ink px-4 py-2 text-sm font-black text-white shadow-glow transition hover:-translate-y-0.5 dark:bg-signal dark:text-ink sm:inline-flex" href="https://github.com/Susanskchen-NYCU/work-space-for-SCHEN" target="_blank" rel="noreferrer">
+            GitHub
+          </a>
+        </div>
+      </div>
     </header>
 
-    <main id="top">
-      <section class="hero" aria-label="首頁">
-        <img class="hero-image" src="assets/images/hero-academic-workspace.png" alt="明亮的大學研究工作空間，有筆記本、電腦與資料視覺化畫面">
-        <div class="hero-overlay"></div>
-        <div class="hero-content">
-          <p class="eyebrow">NYCU · Teaching · Research · Digital Scholarship</p>
-          <h1>Susan Schen</h1>
-          <p class="hero-copy">以清楚、可操作的方式連結教育心理、測驗評量、資料分析與 AI 工具，讓研究與教學都更容易被理解、實作與延伸。</p>
-          <div class="hero-actions">
-            <a class="button button-primary" href="https://github.com/Susanskchen-NYCU/work-space-for-SCHEN" target="_blank" rel="noreferrer">GitHub 專案</a>
-            <a class="button button-secondary" href="#work">查看作品</a>
+    <main id="top" class="relative z-10">
+      <section class="hero-shell relative min-h-[92vh] overflow-hidden px-4 pb-16 pt-28 md:px-8 md:pt-32">
+        <img class="absolute inset-0 h-full w-full object-cover" src="assets/images/hero-academic-workspace.png" alt="明亮的大學研究工作空間，有筆記本、電腦與資料視覺化畫面">
+        <div class="absolute inset-0 bg-[linear-gradient(90deg,rgba(245,241,232,.96)_0%,rgba(245,241,232,.72)_42%,rgba(245,241,232,.18)_78%),linear-gradient(0deg,rgba(245,241,232,.86),rgba(245,241,232,.08))] dark:bg-[linear-gradient(90deg,rgba(8,9,13,.94)_0%,rgba(8,9,13,.78)_46%,rgba(8,9,13,.22)_82%),linear-gradient(0deg,rgba(8,9,13,.92),rgba(8,9,13,.2))]"></div>
+        <div class="relative mx-auto grid max-w-7xl gap-12 lg:grid-cols-[minmax(0,1.05fr)_minmax(340px,.72fr)] lg:items-center">
+          <div class="hero-copy max-w-4xl">
+            <p class="kicker reveal">NYCU · Research Ops · Teaching Tools · AI Studio</p>
+            <h1 class="reveal mt-4 max-w-4xl text-6xl font-black leading-[0.92] tracking-normal text-balance sm:text-7xl lg:text-8xl">
+              Work Space for SCHEN
+            </h1>
+            <p class="reveal mt-7 max-w-2xl text-lg font-medium leading-8 text-black/68 dark:text-white/70 md:text-xl">
+              一個把研究、教學、測驗評量、AI 工具與數位作品整理在一起的互動式工作入口。
+            </p>
+            <div class="reveal mt-9 flex flex-wrap gap-3">
+              <a class="action-button primary" href="#systems">
+                <i data-lucide="sparkles"></i>
+                Explore
+              </a>
+              <button class="action-button secondary" type="button" @click="commandOpen = true">
+                <i data-lucide="command"></i>
+                Command
+              </button>
+            </div>
+          </div>
+
+          <aside class="reveal dashboard-panel">
+            <div class="flex items-center justify-between gap-4">
+              <div>
+                <p class="text-xs font-black uppercase text-signal">Live Workspace</p>
+                <h2 class="mt-1 text-2xl font-black">SCHEN OS</h2>
+              </div>
+              <span class="rounded-full border border-signal/30 px-3 py-1 text-xs font-black text-signal">ONLINE</span>
+            </div>
+            <div class="mt-7 grid grid-cols-3 gap-3">
+              <button class="metric-tile" type="button" @click="setMode('research')" :class="{ 'is-active': mode === 'research' }">
+                <span x-text="stats.papers"></span>
+                <small>Notes</small>
+              </button>
+              <button class="metric-tile" type="button" @click="setMode('teaching')" :class="{ 'is-active': mode === 'teaching' }">
+                <span x-text="stats.modules"></span>
+                <small>Units</small>
+              </button>
+              <button class="metric-tile" type="button" @click="setMode('ai')" :class="{ 'is-active': mode === 'ai' }">
+                <span x-text="stats.tools"></span>
+                <small>Tools</small>
+              </button>
+            </div>
+            <div class="mt-7 rounded-lg border border-white/12 bg-white/8 p-4">
+              <div class="flex items-center justify-between gap-4 text-sm font-bold text-white/68">
+                <span x-text="modeLabel"></span>
+                <span x-text="clock"></span>
+              </div>
+              <div class="mt-4 h-2 overflow-hidden rounded-full bg-white/10">
+                <div class="h-full rounded-full bg-gradient-to-r from-signal via-lemon to-ember transition-all duration-500" :style="`width:${progress}%`"></div>
+              </div>
+              <p class="mt-4 text-sm leading-6 text-white/68" x-text="modeCopy"></p>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <section id="lab" class="relative px-4 py-20 md:px-8">
+        <div class="mx-auto grid max-w-7xl gap-10 lg:grid-cols-[.74fr_1fr] lg:items-end">
+          <div>
+            <p class="kicker">Workspace DNA</p>
+            <h2 class="mt-4 text-4xl font-black leading-tight md:text-6xl">不是作品集，是一個可持續更新的研究工作台。</h2>
+          </div>
+          <p class="text-lg leading-8 text-black/62 dark:text-white/62">
+            這個網站設計成公開入口：可以放課程教材、研究筆記、互動 demo、資料分析流程、AI 工作流與 GitHub 專案連結。
+          </p>
+        </div>
+
+        <div class="mx-auto mt-12 grid max-w-7xl gap-4 md:grid-cols-3">
+          <article class="glass-card reveal">
+            <i data-lucide="brain-circuit"></i>
+            <h3>Psychometrics</h3>
+            <p>量表、信效度、IRT、CAT 與測驗設計的研究整理。</p>
+          </article>
+          <article class="glass-card reveal">
+            <i data-lucide="presentation"></i>
+            <h3>Teaching Studio</h3>
+            <p>課程單元、講義、活動設計與可重用教學素材。</p>
+          </article>
+          <article class="glass-card reveal">
+            <i data-lucide="bot"></i>
+            <h3>AI Prototypes</h3>
+            <p>把 AI 融入讀文獻、寫教材、資料整理與研究輔助。</p>
+          </article>
+        </div>
+      </section>
+
+      <section id="systems" class="relative bg-ink px-4 py-20 text-white md:px-8">
+        <div class="mx-auto max-w-7xl">
+          <div class="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+            <div>
+              <p class="kicker">Interactive Systems</p>
+              <h2 class="mt-4 text-4xl font-black leading-tight md:text-6xl">點選分類，切換工作模組。</h2>
+            </div>
+            <div class="flex flex-wrap gap-2">
+              <template x-for="filter in filters" :key="filter.id">
+                <button class="filter-chip" type="button" @click="activeFilter = filter.id" :class="{ 'is-active': activeFilter === filter.id }" x-text="filter.label"></button>
+              </template>
+            </div>
+          </div>
+
+          <div class="mt-12 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+            <template x-for="item in filteredSystems" :key="item.title">
+              <article class="system-card reveal" @mousemove="tiltCard($event)" @mouseleave="resetTilt($event)">
+                <div class="flex items-start justify-between gap-4">
+                  <span class="system-icon" :class="item.accent">
+                    <i :data-lucide="item.icon"></i>
+                  </span>
+                  <span class="text-xs font-black uppercase text-white/45" x-text="item.type"></span>
+                </div>
+                <h3 x-text="item.title"></h3>
+                <p x-text="item.copy"></p>
+                <div class="mt-6 flex items-center justify-between text-xs font-black uppercase text-white/48">
+                  <span x-text="item.status"></span>
+                  <i data-lucide="arrow-up-right"></i>
+                </div>
+              </article>
+            </template>
           </div>
         </div>
       </section>
 
-      <section id="about" class="section section-intro">
-        <div class="section-heading">
-          <p class="eyebrow">About</p>
-          <h2>把複雜概念整理成可以教、可以用、可以再研究的知識。</h2>
-        </div>
-        <p class="lead">這個網站可以作為個人首頁、課程入口與研究作品集。你可以在這裡放置課程教材、論文筆記、量表與測驗研究、資料分析範例，以及正在發展中的 AI 輔助教學或研究專案。</p>
-      </section>
-
-      <section id="focus" class="section">
-        <div class="section-heading">
-          <p class="eyebrow">Focus Areas</p>
-          <h2>研究與教學主題</h2>
-        </div>
-        <div class="feature-grid">
-          <article class="feature-card">
-            <span class="feature-number">01</span>
-            <h3>測驗與量表研究</h3>
-            <p>整理心理計量、信度效度、IRT、CAT 與測驗設計相關內容，讓方法細節更容易被學生與研究者掌握。</p>
-          </article>
-          <article class="feature-card">
-            <span class="feature-number">02</span>
-            <h3>教育資料分析</h3>
-            <p>建立資料處理、統計模型、視覺化與研究解釋的範例，協助從資料走到有根據的結論。</p>
-          </article>
-          <article class="feature-card">
-            <span class="feature-number">03</span>
-            <h3>AI 輔助學習</h3>
-            <p>探索 AI 如何支援讀文獻、寫教材、設計活動、整理回饋與發展可測試的教學工具。</p>
-          </article>
+      <section id="missions" class="relative px-4 py-20 md:px-8">
+        <div class="mx-auto grid max-w-7xl gap-8 lg:grid-cols-[.86fr_1.14fr]">
+          <div>
+            <p class="kicker">Mission Board</p>
+            <h2 class="mt-4 text-4xl font-black leading-tight md:text-6xl">選一條路線，網站就變成對應入口。</h2>
+            <div class="mt-8 flex flex-wrap gap-2">
+              <template x-for="tab in missionTabs" :key="tab.id">
+                <button class="mission-tab" type="button" @click="activeMission = tab.id" :class="{ 'is-active': activeMission === tab.id }" x-text="tab.label"></button>
+              </template>
+            </div>
+          </div>
+          <div class="mission-panel reveal">
+            <p class="text-sm font-black uppercase text-ember" x-text="currentMission.label"></p>
+            <h3 class="mt-3 text-3xl font-black md:text-5xl" x-text="currentMission.title"></h3>
+            <p class="mt-5 text-lg leading-8 text-black/62 dark:text-white/64" x-text="currentMission.copy"></p>
+            <div class="mt-8 grid gap-3 sm:grid-cols-3">
+              <template x-for="point in currentMission.points" :key="point">
+                <div class="rounded-lg border border-black/10 bg-white/54 p-4 text-sm font-bold text-black/62 dark:border-white/10 dark:bg-white/8 dark:text-white/62" x-text="point"></div>
+              </template>
+            </div>
+          </div>
         </div>
       </section>
 
-      <section id="work" class="section work-section">
-        <div class="section-heading">
-          <p class="eyebrow">Selected Work</p>
-          <h2>可以放在這裡的內容</h2>
+      <section id="contact" class="relative px-4 pb-20 md:px-8">
+        <div class="mx-auto grid max-w-7xl gap-6 rounded-[2rem] border border-black/10 bg-[#14100d] p-8 text-white shadow-2xl md:grid-cols-[1fr_auto] md:items-center md:p-12">
+          <div>
+            <p class="kicker">Launch</p>
+            <h2 class="mt-3 text-4xl font-black leading-tight md:text-6xl">Work Space for SCHEN is ready to ship.</h2>
+            <p class="mt-5 max-w-2xl text-lg leading-8 text-white/64">把它推到 GitHub Pages 後，就可以成為你的公開網站入口。</p>
+          </div>
+          <div class="flex flex-col gap-3 sm:flex-row md:flex-col">
+            <a class="action-button primary" href="https://github.com/Susanskchen-NYCU" target="_blank" rel="noreferrer">
+              <i data-lucide="github"></i>
+              Profile
+            </a>
+            <button class="action-button secondary dark-panel" type="button" @click="copyRepo()">
+              <i data-lucide="copy"></i>
+              <span x-text="copied ? 'Copied' : 'Copy Repo'"></span>
+            </button>
+          </div>
         </div>
-        <div class="work-list">
-          <a class="work-item" href="https://github.com/Susanskchen-NYCU/work-space-for-SCHEN" target="_blank" rel="noreferrer">
-            <span>GitHub Workspace</span>
-            <strong>教學、研究與網站檔案的主要倉庫</strong>
-          </a>
-          <a class="work-item" href="#contact">
-            <span>Course Materials</span>
-            <strong>課程教材、單元講義與學習活動</strong>
-          </a>
-          <a class="work-item" href="#contact">
-            <span>Research Notes</span>
-            <strong>論文摘要、方法筆記與研究流程整理</strong>
-          </a>
-        </div>
-      </section>
-
-      <section id="contact" class="section contact-band">
-        <div>
-          <p class="eyebrow">Contact</p>
-          <h2>讓網站成為你的公開研究與教學入口。</h2>
-        </div>
-        <a class="button button-primary" href="https://github.com/Susanskchen-NYCU" target="_blank" rel="noreferrer">前往 GitHub Profile</a>
       </section>
     </main>
 
-    <footer class="site-footer">
-      <p>© 2026 Susan Schen. Built for GitHub Pages.</p>
+    <button class="back-top" type="button" @click="scrollTop()" x-show="showTop" x-transition aria-label="回到頂端">
+      <i data-lucide="arrow-up"></i>
+    </button>
+
+    <div class="fixed inset-0 z-50 grid place-items-center bg-black/60 p-4 backdrop-blur-sm" x-show="commandOpen" x-transition.opacity x-cloak @keydown.escape.window="commandOpen = false">
+      <div class="command-panel" @click.outside="commandOpen = false">
+        <div class="flex items-center gap-3 border-b border-black/10 p-4 dark:border-white/10">
+          <i data-lucide="command" class="h-5 w-5 text-signal"></i>
+          <input class="w-full bg-transparent text-lg font-bold outline-none placeholder:text-black/35 dark:placeholder:text-white/35" type="search" placeholder="Jump to..." x-model="query" @keydown.enter.prevent="runFirstCommand()">
+          <button class="icon-button" type="button" @click="commandOpen = false" aria-label="關閉">
+            <i data-lucide="x"></i>
+          </button>
+        </div>
+        <div class="max-h-[55vh] overflow-auto p-2">
+          <template x-for="command in filteredCommands" :key="command.label">
+            <button class="command-item" type="button" @click="runCommand(command)">
+              <i :data-lucide="command.icon"></i>
+              <span x-text="command.label"></span>
+            </button>
+          </template>
+        </div>
+      </div>
+    </div>
+
+    <footer class="relative z-10 border-t border-black/10 px-4 py-8 text-sm font-bold text-black/45 dark:border-white/10 dark:text-white/40 md:px-8">
+      <div class="mx-auto flex max-w-7xl flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+        <p>© 2026 Work Space for SCHEN.</p>
+        <p>Built with HTML, Tailwind CSS, Alpine.js, GSAP, and Lucide.</p>
+      </div>
     </footer>
+
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <script src="assets/js/app.js"></script>
   </body>
 </html>
