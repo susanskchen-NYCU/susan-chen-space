@@ -50,3 +50,17 @@ https://github.com/Susanskchen-NYCU/work-space-for-SCHEN
 ```
 
 這會使用 `.codex-git` 裡的 commits 推送到 GitHub。
+
+## 本機預覽
+
+在 PowerShell 執行：
+
+```powershell
+.\preview.ps1
+```
+
+然後開啟：
+
+```text
+http://localhost:4173
+```
