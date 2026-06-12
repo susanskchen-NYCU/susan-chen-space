@@ -38,3 +38,15 @@ Repository:
 ```text
 https://github.com/Susanskchen-NYCU/work-space-for-SCHEN
 ```
+
+## 發布到 GitHub
+
+因為這個工作環境的原始 `.git` 目錄被 Windows 權限鎖住，這次的 step-by-step commits 保存在 `.codex-git`。
+
+在自己的 PowerShell 執行：
+
+```powershell
+.\publish.ps1
+```
+
+這會使用 `.codex-git` 裡的 commits 推送到 GitHub。
