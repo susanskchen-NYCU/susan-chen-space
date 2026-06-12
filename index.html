@@ -72,7 +72,17 @@
           <a class="hidden rounded-full bg-ink px-4 py-2 text-sm font-black text-white shadow-glow transition hover:-translate-y-0.5 dark:bg-signal dark:text-ink sm:inline-flex" href="https://github.com/Susanskchen-NYCU/work-space-for-SCHEN" target="_blank" rel="noreferrer">
             GitHub
           </a>
+          <button class="icon-button md:hidden" type="button" @click="mobileOpen = !mobileOpen" title="選單" aria-label="開啟選單">
+            <i data-lucide="menu"></i>
+          </button>
         </div>
+      </div>
+      <div class="absolute bottom-0 left-0 h-0.5 bg-signal transition-[width] duration-150" :style="`width:${scrollProgress}%`"></div>
+      <div class="mx-auto mt-3 grid max-w-7xl gap-2 rounded-2xl border border-black/10 bg-white/76 p-2 text-sm font-black text-black/62 shadow-xl dark:border-white/10 dark:bg-white/10 dark:text-white/68 md:hidden" x-show="mobileOpen" x-transition x-cloak>
+        <a class="nav-pill" href="#lab" @click="mobileOpen = false">Lab</a>
+        <a class="nav-pill" href="#systems" @click="mobileOpen = false">Systems</a>
+        <a class="nav-pill" href="#missions" @click="mobileOpen = false">Missions</a>
+        <a class="nav-pill" href="#contact" @click="mobileOpen = false">Launch</a>
       </div>
     </header>
 
@@ -176,7 +186,7 @@
             </div>
             <div class="flex flex-wrap gap-2">
               <template x-for="filter in filters" :key="filter.id">
-                <button class="filter-chip" type="button" @click="activeFilter = filter.id" :class="{ 'is-active': activeFilter === filter.id }" x-text="filter.label"></button>
+                <button class="filter-chip" type="button" @click="activeFilter = filter.id; $nextTick(refreshIcons)" :class="{ 'is-active': activeFilter === filter.id }" x-text="filter.label"></button>
               </template>
             </div>
           </div>
@@ -209,7 +219,7 @@
             <h2 class="mt-4 text-4xl font-black leading-tight md:text-6xl">選一條路線，網站就變成對應入口。</h2>
             <div class="mt-8 flex flex-wrap gap-2">
               <template x-for="tab in missionTabs" :key="tab.id">
-                <button class="mission-tab" type="button" @click="activeMission = tab.id" :class="{ 'is-active': activeMission === tab.id }" x-text="tab.label"></button>
+                <button class="mission-tab" type="button" @click="activeMission = tab.id; $nextTick(refreshIcons)" :class="{ 'is-active': activeMission === tab.id }" x-text="tab.label"></button>
               </template>
             </div>
           </div>

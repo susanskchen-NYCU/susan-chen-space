@@ -5,10 +5,12 @@ function workspaceApp() {
     clock: "",
     copied: false,
     commandOpen: false,
+    mobileOpen: false,
     mode: "research",
     pointer: { x: 600, y: 240 },
     progress: 74,
     query: "",
+    scrollProgress: 0,
     showTop: false,
     stats: {
       papers: 42,
@@ -128,6 +130,8 @@ function workspaceApp() {
       });
 
       window.addEventListener("scroll", () => {
+        const scrollable = document.documentElement.scrollHeight - window.innerHeight;
+        this.scrollProgress = scrollable > 0 ? Math.min(100, (window.scrollY / scrollable) * 100) : 0;
         this.showTop = window.scrollY > 620;
       });
 
@@ -144,11 +148,19 @@ function workspaceApp() {
       });
     },
     copyRepo() {
-      navigator.clipboard.writeText("https://github.com/Susanskchen-NYCU/work-space-for-SCHEN");
-      this.copied = true;
-      setTimeout(() => {
-        this.copied = false;
-      }, 1600);
+      const repoUrl = "https://github.com/Susanskchen-NYCU/work-space-for-SCHEN";
+      const done = () => {
+        this.copied = true;
+        setTimeout(() => {
+          this.copied = false;
+        }, 1600);
+      };
+
+      if (navigator.clipboard?.writeText) {
+        navigator.clipboard.writeText(repoUrl).then(done).catch(done);
+      } else {
+        done();
+      }
     },
     resetTilt(event) {
       event.currentTarget.style.transform = "perspective(900px) rotateX(0deg) rotateY(0deg)";
