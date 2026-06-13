@@ -27,7 +27,18 @@ Work Space for SCHEN 是一個以 HTML 開發、可直接部署到 GitHub Pages 
 - `index.html`：網站首頁
 - `assets/css/styles.css`：客製化視覺效果
 - `assets/js/app.js`：互動功能
+- `assets/data/publications.json`：Google Scholar 文章資料
 - `assets/images/hero-academic-workspace.png`：首頁視覺圖
+
+## 更新 Publications
+
+文章清單放在：
+
+```text
+assets/data/publications.json
+```
+
+可新增或修改文章標題、作者、出版資訊、年份、引用數、主題分類與 Google Scholar 連結。網站會自動讀取這個檔案並產生可搜尋、可依年份與主題篩選的文章區塊。
 
 ## GitHub Pages
 

@@ -9,6 +9,10 @@ function workspaceApp() {
     mode: "research",
     pointer: { x: 600, y: 240 },
     progress: 74,
+    publicationQuery: "",
+    publicationTopic: "all",
+    publicationYear: "all",
+    publications: [],
     query: "",
     scrollProgress: 0,
     showTop: false,
@@ -88,6 +92,7 @@ function workspaceApp() {
     commands: [
       { label: "Open Lab", icon: "flask-conical", target: "#lab" },
       { label: "Open Systems", icon: "layers-3", target: "#systems" },
+      { label: "Open Publications", icon: "graduation-cap", target: "#publications" },
       { label: "Open Missions", icon: "radar", target: "#missions" },
       { label: "Open GitHub", icon: "github", url: "https://github.com/Susanskchen-NYCU/work-space-for-SCHEN" },
       { label: "Toggle Theme", icon: "moon", action: "theme" }
@@ -103,6 +108,25 @@ function workspaceApp() {
     get filteredSystems() {
       if (this.activeFilter === "all") return this.systems;
       return this.systems.filter((item) => item.group === this.activeFilter);
+    },
+    get filteredPublications() {
+      const term = this.publicationQuery.trim().toLowerCase();
+      return this.publications.filter((paper) => {
+        const haystack = `${paper.title} ${paper.authors} ${paper.venue} ${paper.topic}`.toLowerCase();
+        const matchesText = !term || haystack.includes(term);
+        const matchesTopic = this.publicationTopic === "all" || paper.topic === this.publicationTopic;
+        const matchesYear = this.publicationYear === "all" || String(paper.year) === String(this.publicationYear);
+        return matchesText && matchesTopic && matchesYear;
+      });
+    },
+    get publicationTopics() {
+      return [...new Set(this.publications.map((paper) => paper.topic))].sort();
+    },
+    get publicationYears() {
+      return [...new Set(this.publications.map((paper) => paper.year))].sort((a, b) => b - a);
+    },
+    get totalCitations() {
+      return this.publications.reduce((sum, paper) => sum + Number(paper.citations || 0), 0);
     },
     get modeCopy() {
       const copy = {
@@ -146,6 +170,19 @@ function workspaceApp() {
         setupMotion();
         refreshIcons();
       });
+
+      this.loadPublications();
+    },
+    async loadPublications() {
+      try {
+        const response = await fetch("assets/data/publications.json");
+        this.publications = await response.json();
+      } catch (error) {
+        console.warn("Could not load publications", error);
+        this.publications = [];
+      } finally {
+        this.$nextTick(refreshIcons);
+      }
     },
     copyRepo() {
       const repoUrl = "https://github.com/Susanskchen-NYCU/work-space-for-SCHEN";

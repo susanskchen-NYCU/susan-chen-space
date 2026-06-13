@@ -62,6 +62,7 @@
         <nav class="hidden items-center gap-1 rounded-full border border-black/10 bg-white/55 p-1 text-sm font-bold text-black/60 backdrop-blur dark:border-white/10 dark:bg-white/10 dark:text-white/65 md:flex" aria-label="主要導覽">
           <a class="nav-pill" href="#lab">Lab</a>
           <a class="nav-pill" href="#systems">Systems</a>
+          <a class="nav-pill" href="#publications">Papers</a>
           <a class="nav-pill" href="#missions">Missions</a>
           <a class="nav-pill" href="#contact">Launch</a>
         </nav>
@@ -86,6 +87,7 @@
       <div class="mx-auto mt-3 grid max-w-7xl gap-2 rounded-2xl border border-black/10 bg-white/76 p-2 text-sm font-black text-black/62 shadow-xl dark:border-white/10 dark:bg-white/10 dark:text-white/68 md:hidden" x-show="mobileOpen" x-transition x-cloak>
         <a class="nav-pill" href="#lab" @click="mobileOpen = false">Lab</a>
         <a class="nav-pill" href="#systems" @click="mobileOpen = false">Systems</a>
+        <a class="nav-pill" href="#publications" @click="mobileOpen = false">Papers</a>
         <a class="nav-pill" href="#missions" @click="mobileOpen = false">Missions</a>
         <a class="nav-pill" href="#contact" @click="mobileOpen = false">Launch</a>
       </div>
@@ -213,6 +215,89 @@
                 </div>
               </article>
             </template>
+          </div>
+        </div>
+      </section>
+
+      <section id="publications" class="relative px-4 py-20 md:px-8">
+        <div class="mx-auto max-w-7xl">
+          <div class="grid gap-8 lg:grid-cols-[.82fr_1.18fr] lg:items-end">
+            <div>
+              <p class="kicker">Google Scholar</p>
+              <h2 class="mt-4 text-4xl font-black leading-tight md:text-6xl">Publications from the research archive.</h2>
+              <p class="mt-5 text-lg leading-8 text-black/62 dark:text-white/62">
+                文章資料取自公開 Google Scholar profile，整理成可搜尋、可篩選的研究清單。
+              </p>
+            </div>
+            <div class="scholar-card reveal">
+              <div>
+                <p class="text-sm font-black uppercase text-[#7a1f22] dark:text-[#ff9b81]">Ssu-Kuang Chen</p>
+                <h3 class="mt-2 text-3xl font-black">National Yang Ming Chiao Tung University</h3>
+                <p class="mt-3 text-sm font-bold text-black/56 dark:text-white/58">educational measurement · educational psychology · research methodology and statistics</p>
+              </div>
+              <a class="action-button primary mt-6 w-full sm:w-auto" href="https://scholar.google.com.tw/citations?hl=zh-TW&user=XQLAldAAAAAJ&view_op=list_works&sortby=pubdate" target="_blank" rel="noreferrer">
+                <i data-lucide="graduation-cap"></i>
+                Google Scholar
+              </a>
+            </div>
+          </div>
+
+          <div class="publication-toolbar mt-10">
+            <label class="publication-search">
+              <i data-lucide="search"></i>
+              <input type="search" placeholder="Search title, author, venue..." x-model="publicationQuery">
+            </label>
+            <select class="publication-select" x-model="publicationTopic">
+              <option value="all">All topics</option>
+              <template x-for="topic in publicationTopics" :key="topic">
+                <option :value="topic" x-text="topic"></option>
+              </template>
+            </select>
+            <select class="publication-select" x-model="publicationYear">
+              <option value="all">All years</option>
+              <template x-for="year in publicationYears" :key="year">
+                <option :value="year" x-text="year"></option>
+              </template>
+            </select>
+          </div>
+
+          <div class="mt-6 grid gap-4 lg:grid-cols-[.34fr_1fr]">
+            <aside class="publication-stats reveal">
+              <div>
+                <span x-text="publications.length"></span>
+                <small>Publications</small>
+              </div>
+              <div>
+                <span x-text="totalCitations"></span>
+                <small>Citations</small>
+              </div>
+              <div>
+                <span x-text="publicationYears[0] || '—'"></span>
+                <small>Latest year</small>
+              </div>
+            </aside>
+
+            <div class="publication-list reveal">
+              <template x-for="paper in filteredPublications" :key="paper.title">
+                <article class="publication-item">
+                  <div class="flex flex-wrap items-center gap-2">
+                    <span class="publication-topic" x-text="paper.topic"></span>
+                    <span class="publication-year" x-text="paper.year"></span>
+                    <span class="publication-cites" x-text="`${paper.citations} cites`"></span>
+                  </div>
+                  <h3 x-text="paper.title"></h3>
+                  <p class="authors" x-text="paper.authors"></p>
+                  <p class="venue" x-text="paper.venue"></p>
+                  <a class="publication-link" :href="paper.scholarUrl" target="_blank" rel="noreferrer">
+                    <span>Open in Scholar</span>
+                    <i data-lucide="arrow-up-right"></i>
+                  </a>
+                </article>
+              </template>
+              <div class="publication-empty" x-show="filteredPublications.length === 0">
+                No publications match the current filters.
+              </div>
+            </div>
           </div>
         </div>
       </section>
